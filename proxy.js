@@ -3,15 +3,20 @@ import { saveHistory } from "./history.js";
 
 export const proxyRequest = async (req, res) => {
   try {
-    const { url, method, headers, body, params } = req.body;
+    const { user_id, url, method, headers, body, params } = req.body;
 
     if (!url) {
       return res.status(400).json({ error: "URL is required" });
     }
 
+    if (!user_id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
     const start = Date.now();
 
     const response = await axios({
+      user_id,
       url,
       method: method || "GET",
       headers: headers || {},
@@ -23,12 +28,12 @@ export const proxyRequest = async (req, res) => {
     const timeTaken = Date.now() - start;
 
     await saveHistory({
-      user_id: "anonymous",
+      user_id,            // ✅ REAL UID
       url,
       method,
-      headers,
-      params,
-      body,
+      headers: headers || {},
+      params: params || {},
+      body: body || {},
     });
 
     return res.json({
