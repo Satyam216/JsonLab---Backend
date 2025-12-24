@@ -13,10 +13,10 @@ export const proxyRequest = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+
     const start = Date.now();
 
     const response = await axios({
-      user_id,
       url,
       method: method || "GET",
       headers: headers || {},
